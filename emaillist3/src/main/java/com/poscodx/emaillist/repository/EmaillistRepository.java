@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public class EmaillistRepository {
-    public static List<EmailListVo> findAll() {
+    public List<EmailListVo> findAll() {
         List<EmailListVo> result = new ArrayList<>();
         Connection conn = null;
         PreparedStatement pstmt = null;
