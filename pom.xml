@@ -8,5 +8,6 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>hellospring</module>
-	</modules>
+        <module>emaillist3</module>
+    </modules>
 </project>
