@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="emaillist3" />
         <module name="hellospring" />
+        <module name="guestbook3" />
       </profile>
     </annotationProcessing>
   </component>
