@@ -26,6 +26,14 @@
             <version>1.4</version>
         </dependency>
 
+        <!-- spring jdbc -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+
+
         <!-- spring mvc -->
         <dependency>
             <groupId>org.springframework</groupId>

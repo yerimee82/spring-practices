@@ -17,18 +17,21 @@ import java.util.List;
 public class GuestbookController {
     private final GuestbookRepository guestbookRepositoryWithRawJdbc;
     private final GuestbookRepository guestbookRepositoryWithJdbcContext;
+    private final GuestbookRepository guestbookRepositoryWithJdbcTemplate;
 
     @Autowired
     public GuestbookController(
             @Qualifier("guestbookRepositoryWithRawJdbc") GuestbookRepository guestbookRepositoryWithRawJdbc,
-            @Qualifier("guestbookRepositoryWithJdbcContext") GuestbookRepository guestbookRepositoryWithJdbcContext) {
+            @Qualifier("guestbookRepositoryWithJdbcContext") GuestbookRepository guestbookRepositoryWithJdbcContext,
+            @Qualifier("guestbookRepositoryWithJdbcTemplate") GuestbookRepository guestbookRepositoryWithJdbcTemplate) {
         this.guestbookRepositoryWithRawJdbc = guestbookRepositoryWithRawJdbc;
         this.guestbookRepositoryWithJdbcContext = guestbookRepositoryWithJdbcContext;
+        this.guestbookRepositoryWithJdbcTemplate = guestbookRepositoryWithJdbcTemplate;
     }
 
     @RequestMapping("/")
     public String index(Model model) {
-        List<GuestbookVo> list = guestbookRepositoryWithRawJdbc.findAll();
+        List<GuestbookVo> list = guestbookRepositoryWithJdbcTemplate.findAll();
         model.addAttribute("list", list);
 
         return "index";
@@ -36,7 +39,7 @@ public class GuestbookController {
 
     @RequestMapping("/add")
     public String add(GuestbookVo vo) {
-        guestbookRepositoryWithJdbcContext.insert(vo);
+        guestbookRepositoryWithJdbcTemplate.insert(vo);
         return "redirect:/";
     }
 
@@ -48,7 +51,7 @@ public class GuestbookController {
 
     @RequestMapping(value="/delete/{no}", method=RequestMethod.POST)
     public String delete(@PathVariable("no") Long no, @RequestParam(value="password", required=true, defaultValue="") String password) {
-        guestbookRepositoryWithJdbcContext.delete(no, password);
+        guestbookRepositoryWithJdbcTemplate.delete(no, password);
         return "redirect:/";
     }
 }

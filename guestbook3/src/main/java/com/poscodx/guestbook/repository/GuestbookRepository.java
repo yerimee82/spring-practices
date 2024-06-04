@@ -1,6 +1,7 @@
 package com.poscodx.guestbook.repository;
 
 import com.poscodx.guestbook.vo.GuestbookVo;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

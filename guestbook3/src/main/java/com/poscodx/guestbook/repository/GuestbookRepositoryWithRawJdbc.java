@@ -21,7 +21,7 @@ public class GuestbookRepositoryWithRawJdbc implements GuestbookRepository{
     public List<GuestbookVo> findAll() {
         List<GuestbookVo> result = new ArrayList<>();
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement("select no, name, contents, DATE_FORMAT(reg_date, '%Y-%m-%d %H:%i') as formatted_reg_date from guestbook order by no");
+             PreparedStatement pstmt = conn.prepareStatement("select no, name, contents, DATE_FORMAT(reg_date, '%Y-%m-%d %H:%i') as formatted_reg_date from guestbook order by formatted_reg_date");
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GuestbookVo vo = new GuestbookVo();
