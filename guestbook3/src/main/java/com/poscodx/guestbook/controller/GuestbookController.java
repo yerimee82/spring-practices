@@ -1,9 +1,7 @@
 package com.poscodx.guestbook.controller;
 
-import com.poscodx.guestbook.repository.GuestbookRepository;
+import com.poscodx.guestbook.service.GuestbookService;
 import com.poscodx.guestbook.vo.GuestbookVo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,23 +13,16 @@ import java.util.List;
 
 @Controller
 public class GuestbookController {
-    private final GuestbookRepository guestbookRepositoryWithRawJdbc;
-    private final GuestbookRepository guestbookRepositoryWithJdbcContext;
-    private final GuestbookRepository guestbookRepositoryWithJdbcTemplate;
+    private final GuestbookService guestbookService;
 
-    @Autowired
-    public GuestbookController(
-            @Qualifier("guestbookRepositoryWithRawJdbc") GuestbookRepository guestbookRepositoryWithRawJdbc,
-            @Qualifier("guestbookRepositoryWithJdbcContext") GuestbookRepository guestbookRepositoryWithJdbcContext,
-            @Qualifier("guestbookRepositoryWithJdbcTemplate") GuestbookRepository guestbookRepositoryWithJdbcTemplate) {
-        this.guestbookRepositoryWithRawJdbc = guestbookRepositoryWithRawJdbc;
-        this.guestbookRepositoryWithJdbcContext = guestbookRepositoryWithJdbcContext;
-        this.guestbookRepositoryWithJdbcTemplate = guestbookRepositoryWithJdbcTemplate;
+    public GuestbookController(GuestbookService guestbookService) {
+        this.guestbookService = guestbookService;
     }
+
 
     @RequestMapping("/")
     public String index(Model model) {
-        List<GuestbookVo> list = guestbookRepositoryWithJdbcTemplate.findAll();
+        List<GuestbookVo> list = guestbookService.findAll();
         model.addAttribute("list", list);
 
         return "index";
@@ -39,7 +30,7 @@ public class GuestbookController {
 
     @RequestMapping("/add")
     public String add(GuestbookVo vo) {
-        guestbookRepositoryWithJdbcTemplate.insert(vo);
+        guestbookService.insert(vo);
         return "redirect:/";
     }
 
@@ -51,7 +42,7 @@ public class GuestbookController {
 
     @RequestMapping(value="/delete/{no}", method=RequestMethod.POST)
     public String delete(@PathVariable("no") Long no, @RequestParam(value="password", required=true, defaultValue="") String password) {
-        guestbookRepositoryWithJdbcTemplate.delete(no, password);
+        guestbookService.deleteContents(no, password);
         return "redirect:/";
     }
 }

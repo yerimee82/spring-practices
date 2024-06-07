@@ -1,11 +1,15 @@
 package com.poscodx.guestbook.repository.template;
 
+import com.poscodx.guestbook.vo.GuestbookVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcContext {
@@ -15,35 +19,74 @@ public class JdbcContext {
         this.dataSource = dataSource;
     }
 
-    public <T> T executeQueryForObject(String sql) {
-        return null;
+    public <T> List<T> query(String sql, RowMapper<T> rowMapper) {
+        return executeQueryWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makeStatement(Connection connection) throws SQLException {
+                PreparedStatement pstmt = connection.prepareStatement(sql);
+                return pstmt;
+            }
+        }, rowMapper);
     }
 
-    public <T> List<T> executeQueryForObject(String sql, Object[] parameter) {
-        return null;
-    }
-
-    public int executeUpdate(String sql) {
-        return executeUpdateWithStatementStrategy(connection -> {
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-            return pstmt;
+    public int update(String sql) {
+        return executeUpdateWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makeStatement(Connection connection) throws SQLException {
+                PreparedStatement pstmt = connection.prepareStatement(sql);
+                return pstmt;
+            }
         });
     }
 
-    public int executeUpdate(String sql, Object[] parameters) {
+    public int update(String sql, Object[] parameters) {
         return executeUpdateWithStatementStrategy(new StatementStrategy() {
             @Override
             public PreparedStatement makeStatement(Connection connection) throws SQLException {
                 PreparedStatement pstmt = connection.prepareStatement(sql);
                 for (int i = 0; i < parameters.length; i++) {
-                    pstmt.setObject(i+1, parameters[i]);
+                    pstmt.setObject(i + 1, parameters[i]);
                 }
                 return pstmt;
             }
         });
     }
 
-    private int executeUpdateWithStatementStrategy (StatementStrategy statementStrategy) {
+    private <E> List<E> executeQueryWithStatementStrategy(StatementStrategy statementStrategy, RowMapper<E> rowMapper) {
+        List<E> result = new ArrayList<>();
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dataSource.getConnection();
+
+            pstmt = statementStrategy.makeStatement(conn);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                E e = rowMapper.mapRow(rs, rs.getRow());
+                result.add(e);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error:" + e);
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error:" + e);
+            }
+        }
+
+        return result;
+    }
+
+    private int executeUpdateWithStatementStrategy(StatementStrategy statementStrategy) {
         int result = 0;
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -51,32 +94,21 @@ public class JdbcContext {
         try {
             conn = dataSource.getConnection();
             pstmt = statementStrategy.makeStatement(conn);
-
-
-
-//        PreparedStatement pstmt = conn.prepareStatement("insert into guestbook values(null, ?, ?, ?, now())");
-//                PreparedStatement pstmt2 = conn.prepareStatement("select last_insert_id() from dual");
-//            pstmt1.setString(1, vo.getName());
-//            pstmt1.setString(2, vo.getPassword());
-//            pstmt1.setString(3, vo.getContents());
-
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error:" + e);
         } finally {
             try {
-                if(pstmt != null) {
+                if (pstmt != null) {
                     pstmt.close();
                 }
-                if(conn != null) {
+                if (conn != null) {
                     conn.close();
                 }
-            }
-            catch(SQLException e) {
-                System.out.println("Error" + e);
+            } catch (SQLException e) {
+                System.out.println("Error:" + e);
             }
         }
-
         return result;
     }
 }
