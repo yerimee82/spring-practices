@@ -3,6 +3,7 @@ package com.poscodx.guestbook.repository.template;
 import com.poscodx.guestbook.vo.GuestbookVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -60,26 +61,25 @@ public class JdbcContext {
         ResultSet rs = null;
 
         try {
-            conn = dataSource.getConnection();
+            conn = DataSourceUtils.getConnection(dataSource);
 
             pstmt = statementStrategy.makeStatement(conn);
             rs = pstmt.executeQuery();
-            while (rs.next()) {
+            while(rs.next()) {
                 E e = rowMapper.mapRow(rs, rs.getRow());
                 result.add(e);
             }
         } catch (SQLException e) {
-            System.out.println("Error:" + e);
+            throw new RuntimeException(e);
         } finally {
             try {
-                if (pstmt != null) {
+                if(pstmt != null) {
                     pstmt.close();
                 }
-                if (conn != null) {
-                    conn.close();
+                if(conn != null) {
+                    DataSourceUtils.releaseConnection(conn, dataSource);
                 }
-            } catch (SQLException e) {
-                System.out.println("Error:" + e);
+            } catch(SQLException ignored) {
             }
         }
 
@@ -92,23 +92,23 @@ public class JdbcContext {
         PreparedStatement pstmt = null;
 
         try {
-            conn = dataSource.getConnection();
+            conn = DataSourceUtils.getConnection(dataSource);
             pstmt = statementStrategy.makeStatement(conn);
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Error:" + e);
+            throw new RuntimeException(e);
         } finally {
             try {
-                if (pstmt != null) {
+                if(pstmt != null) {
                     pstmt.close();
                 }
-                if (conn != null) {
-                    conn.close();
+                if(conn != null) {
+                    DataSourceUtils.releaseConnection(conn, dataSource);
                 }
-            } catch (SQLException e) {
-                System.out.println("Error:" + e);
+            } catch(SQLException ignored) {
             }
         }
+
         return result;
     }
 }

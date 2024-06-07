@@ -13,16 +13,16 @@ import java.util.List;
 
 @Controller
 public class GuestbookController {
+
     private final GuestbookService guestbookService;
 
     public GuestbookController(GuestbookService guestbookService) {
         this.guestbookService = guestbookService;
     }
 
-
     @RequestMapping("/")
     public String index(Model model) {
-        List<GuestbookVo> list = guestbookService.findAll();
+        List<GuestbookVo> list = guestbookService.getContentsList();
         model.addAttribute("list", list);
 
         return "index";
@@ -30,11 +30,11 @@ public class GuestbookController {
 
     @RequestMapping("/add")
     public String add(GuestbookVo vo) {
-        guestbookService.insert(vo);
+        guestbookService.addContents(vo);
         return "redirect:/";
     }
 
-    @RequestMapping(value="/delete/{no}", method= RequestMethod.GET)
+    @RequestMapping(value="/delete/{no}", method=RequestMethod.GET)
     public String delete(@PathVariable("no") Long no, Model model) {
         model.addAttribute("no", no);
         return "delete";
