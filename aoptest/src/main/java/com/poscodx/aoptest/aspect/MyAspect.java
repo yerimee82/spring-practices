@@ -1,9 +1,7 @@
 package com.poscodx.aoptest.aspect;
 
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,6 +19,27 @@ public class MyAspect {
     @AfterReturning("execution(* *..*.ProductService.find(String))")
     public void adviceAfterReturning() {
         System.out.println("--- AfterReturning Advice ---");
+    }
+
+    @AfterThrowing(pointcut = "execution(* *..*.ProductService.*(..))", throwing = "ex")
+    public void adviceAfterThrowing(Throwable ex) {
+        System.out.println("--- AfterThrowing Advice " + ex + "---");
+    }
+
+    @Around("execution(* *..*.ProductService.*(..))")
+    public Object adviceAround(ProceedingJoinPoint pjp) throws Throwable{
+        /* Before */
+        System.out.println("--- Around(Before) --- ");
+
+        /* Point Cut Method 실행 */
+//        Object[] params = {"Camera"};
+//        Object result = pjp.proceed(params);
+        Object result = pjp.proceed();
+
+        /* After */
+        System.out.println("--- Aroung(After) ---");
+
+        return result;
     }
 
 }
