@@ -7,8 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="emaillist3" />
-        <module name="hellospring" />
+        <module name="aoptest" />
         <module name="guestbook3" />
+        <module name="hellospring" />
       </profile>
     </annotationProcessing>
   </component>

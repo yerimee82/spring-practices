@@ -10,5 +10,6 @@
 		<module>hellospring</module>
         <module>emaillist3</module>
         <module>guestbook3</module>
-    </modules>
+		<module>aoptest</module>
+	</modules>
 </project>
