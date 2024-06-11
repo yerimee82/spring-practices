@@ -10,6 +10,7 @@
 	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	<mvc:annotation-driven />
 
 	<!-- View Resolver -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -27,6 +28,9 @@
 		<!-- defaultEncoding -->
 		<property name="defaultEncoding" value="utf-8" />
 	</bean>
+
+	<!-- mvc url-resource mapping -->
+	<mvc:resources mapping="/images/**" location="file:/Users/yerim/Desktop/fileupload-files/" />
 
 	<context:annotation-config />
 	<context:component-scan base-package="fileupload.controller" />
