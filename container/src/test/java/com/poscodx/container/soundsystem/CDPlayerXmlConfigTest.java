@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations={"classpath:com/poscodx/container/config/soundsystem/applicationContext.xml"})
+@ContextConfiguration(locations={"classpath:com.poscodx.container.config.soundsystem/applicationContext.xml"})
 public class CDPlayerXmlConfigTest {
     @Autowired
     private CDPlayer cdPlayer;
